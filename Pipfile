@@ -6,6 +6,10 @@ name = "pypi"
 [packages]
 mysql-connector-python = "*"
 python-dotenv = "*"
+pyspark = "*"
+boto3 = "*"
+apache-airflow = {version = "==2.5.2", extras = ["celery"]}
+neo4j = "*"
 
 [dev-packages]
 
