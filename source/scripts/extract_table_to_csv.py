@@ -15,12 +15,15 @@ def _extract_data_from_table(table_name='', batch_size=100000):
         yield pd.read_sql_query(query, conn)  # coerce_float parameter to True
 
 
-def write_table_data_to_csv(output_location='/output/', table_name='', batch_size=1000000):
-    # concatenate the batches into a single dataframe
-    df = pd.concat(_extract_data_from_table(table_name=table_name, batch_size=batch_size), ignore_index=True)
+def write_table_data_to_csv(output_location='/output/', table_list=None, batch_size=1000000):
+    if table_list is None:
+        table_list = []
+    for table_name in table_list:
+        # concatenate the batches into a single dataframe
+        df = pd.concat(_extract_data_from_table(table_name=table_name, batch_size=batch_size), ignore_index=True)
 
-    # save the dataframe as a CSV file
-    df.to_csv(f'{output_location}{table_name}.csv', index=False)
+        # save the dataframe as a CSV file
+        df.to_csv(f'{output_location}{table_name}.csv', index=False)
 
 
 # close the connection
