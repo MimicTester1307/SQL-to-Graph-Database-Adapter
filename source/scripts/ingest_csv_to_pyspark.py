@@ -1,7 +1,13 @@
 from pyspark.sql import SparkSession
+import os
 
 # define list to CSV files to load
 csv_file_paths = []
+
+# getting the csv from the output directory
+for file in os.listdir('../../output'):
+    csv_file_paths.append(file)
+
 
 # create a SparkSession object
 spark = SparkSession.builder.appName("CSV to PySpark").getOrCreate()
