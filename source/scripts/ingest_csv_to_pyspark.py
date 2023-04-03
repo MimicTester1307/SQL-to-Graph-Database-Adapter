@@ -1,24 +1,26 @@
-from pyspark.sql import SparkSession
 import os
 
-# define list to CSV files to load
-csv_file_paths = []
 
-# getting the csv from the output directory
-for file in os.listdir('../resources'):
-    csv_file_paths.append(file)
+def ingest_into_spark_df(spark_session):
+    # define list to CSV files to load
+    csv_file_paths = []
 
+    # define dict to store df name and corresponding df
+    stored_dfs = {}
 
-# create a SparkSession object
-spark = SparkSession.builder.appName("CSV to PySpark").getOrCreate()
+    # getting the csv from the output directory
+    for file in os.listdir('../resources'):
+        csv_file_paths.append(file)
 
-# loop through the list of CSV files and load them into PySpark one at a time
-for file in csv_file_paths:
-    # load the CSV into a DataFrame
-    df = spark.read.csv(file, header=True, inferSchema=True)
+    # loop through the list of CSV files and load them into PySpark one at a time
+    for file in csv_file_paths:
+        # load the CSV into a DataFrame
+        df = spark_session.read.csv(file, header=True, inferSchema=True)
 
-    # print the schema and show first few rows
-    df.printSchema()
-    df.show(5)
+        split_file_name = file.split('.')
 
-spark.stop()
+        # store df and corresponding name in dict
+        stored_dfs[split_file_name[0]] = df
+
+    return stored_dfs
+
