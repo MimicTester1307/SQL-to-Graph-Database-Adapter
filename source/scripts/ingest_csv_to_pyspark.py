@@ -5,7 +5,7 @@ import os
 csv_file_paths = []
 
 # getting the csv from the output directory
-for file in os.listdir('../../output'):
+for file in os.listdir('../resources'):
     csv_file_paths.append(file)
 
 
