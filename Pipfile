@@ -4,12 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-mysql-connector-python = "*"
 python-dotenv = "*"
-pyspark = "*"
 boto3 = "*"
 apache-airflow = {version = "==2.5.2", extras = ["celery"]}
 neo4j = "*"
+pyspark = {extras = ["sql"], version = "*"}
+sqlalchemy = "*"
+pandas = "*"
+psycopg2-binary = "*"
+pymysql = "*"
 
 [dev-packages]
 
