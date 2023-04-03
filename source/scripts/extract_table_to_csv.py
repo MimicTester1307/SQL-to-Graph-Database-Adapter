@@ -5,7 +5,7 @@ from connect_to_db import connect_to_db
 conn = connect_to_db()
 
 
-def extract_data_from_table(table_name='', batch_size=100000, output_location='/output/'):
+def _extract_data_from_table(table_name='', batch_size=100000):
     # set the total number of rows in the table
     total_rows = conn.execute(f'SELECT COUNT(*) FROM {table_name};').fetchone()[0]
 
@@ -15,12 +15,12 @@ def extract_data_from_table(table_name='', batch_size=100000, output_location='/
         yield pd.read_sql_query(query, conn)  # coerce_float parameter to True
 
 
-def write_table_data_to_csv():
+def write_table_data_to_csv(output_location='/output/', table_name='', batch_size=1000000):
     # concatenate the batches into a single dataframe
-    df = pd.concat(extract_data_from_table(), ignore_index=True)
+    df = pd.concat(_extract_data_from_table(table_name=table_name, batch_size=batch_size), ignore_index=True)
 
     # save the dataframe as a CSV file
-    df.to_csv('my_table.csv', index=False)
+    df.to_csv(f'{output_location}{table_name}.csv', index=False)
 
 
 # close the connection
