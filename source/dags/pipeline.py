@@ -1,5 +1,5 @@
 from airflow.models import DAG
-from airflow.contrib.file_sensor import FileSensor
+from airflow.contrib.sensors.file_sensor import FileSensor
 from airflow.operators.python import PythonOperator
 from datetime import date, datetime
 from source.scripts import extract_table_to_csv, ingest_csv_to_pyspark
