@@ -13,6 +13,7 @@ REGION = os.environ.get("DB_REGION")
 DB_NAME = os.environ.get("DATABASE")
 ACCESS_KEY = os.environ.get("IAM_ACCESS_KEY")
 SECRET_ACCESS_KEY = os.environ.get("IAM_SECRET_ACCESS_KEY")
+CERT_LOCATION = os.environ.get("CERT_LOCATION")
 os.environ['LIBMYSQL_ENABLE_CLEARTEXT_PLUGIN'] = '1'
 
 
@@ -31,7 +32,7 @@ def connect_to_db():
             password=token,
             port=PORT,
             database=DB_NAME,
-            ssl_ca="../../eu-west-2-bundle.pem"
+            ssl_ca=CERT_LOCATION
         )
         # if conn.ping(reconnect=True):
         #     return conn
@@ -39,6 +40,9 @@ def connect_to_db():
         cur.execute("""SELECT now()""")
         query_results = cur.fetchall()
         print(query_results)  # change to logging
+
+        if conn.ping(reconnect=True):
+            return conn
     except Exception as e:
         print("Database connection failed due to {}".format(e))  # change to logging
 
