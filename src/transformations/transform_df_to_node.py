@@ -1,29 +1,36 @@
-from neo4j import GraphDatabase
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import struct
-import os
-from dotenv import load_dotenv
+from pyspark.sql import DataFrame
+from typing import Dict
+import json
+from neo4j.exceptions import ServiceUnavailable
+import logging
 
-from source.scripts.ingest_csv_to_pyspark import ingest_into_spark_df
 
-# loading the environment variables
-load_dotenv()
+def transform_df_to_node(neo4j_instance_object, df_dict: Dict[str, DataFrame]):
+    """Transforms the given Spark dataframes into Neo4jNodes
 
-# retrieve neo4j connection details
-URI = os.environ.get("NEO4J_URI")
-USERNAME = os.environ.get("NEO4J_USRNAME")
-PASSWORD = os.environ.get("NEO4J_PASSWD")
+    :param neo4j_instance_object: an object representing an AURADB instance
+    :param df_dict: a dictionary representing a dataframe name (key) and the corresponding dataframe (value)
+                    the key serves as the Node label
+    :return: None
+    """
+    print("Beginning Transformation of Data Frames to Nodes...")
 
-# create a SparkSession object and call function to ingest CSV files
-spark = SparkSession.builder.appName("CSV to PySpark").getOrCreate()
-df_dict = ingest_into_spark_df(spark_session=spark)
-spark.stop()
+    # start aura session
+    session = neo4j_instance_object.driver.session()
+    for df_name, df in df_dict.items():
+        # convert PySpark DataFrame to a list of dictionaries
+        data = df.toJSON().map(lambda j: json.loads(j)).collect()
 
-# define query to convert the PySpark df to a Neo4j node
+        # create a query string to create the nodes in Neo4j
+        node_name = df_name
+        columns = df.columns
+        query = f"UNWIND $data AS row CREATE (: `{node_name.title()}` {{ {', '.join([f'{column}: row.{column}' for column in columns])} }})"
 
-for df_name, df in df_dict.items():
-    query = """
-    UNWIND $data as row
-    MERGE (n:%s {id: row.id})
-    SET n.name = row.name
-    """ % (df_name.title())
+        # execute query using Neo4j driver session
+        try:
+            session.run(query, data=data)  # Aura queries use an encrypted connection using the "neo4j+s" URI scheme
+        except ServiceUnavailable as exception:
+            logging.error(f"{query} raised an error: \n {exception}")  # TODO: Fix log (redirect output to file)
+            raise
+
+    session.close()
