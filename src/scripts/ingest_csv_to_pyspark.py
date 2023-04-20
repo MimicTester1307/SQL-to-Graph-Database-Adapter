@@ -1,22 +1,18 @@
 import os
 
 
-def ingest_into_spark_df(spark_session, output_path):
-    # define list to CSV files to load
-    csv_file_paths = []
+def ingest_into_spark_df(spark_session, csv_path):
+    print("Ingesting CSVs into PySpark DataFrames...")
 
     # define dict to store df name and corresponding df
     stored_dfs = {}
 
-    # getting the csv from the output directory
-    for file in os.listdir(output_path):   # check that this location exists. I know it does, but check regardless
-        csv_file_paths.append(file)
-
     # loop through the list of CSV files and load them into PySpark one at a time
-    for file in csv_file_paths:
+    for file in os.listdir(csv_path):
         # load the CSV into a DataFrame
-        df = spark_session.read.csv(file, header=True, inferSchema=True)
+        df = spark_session.read.csv(f'{csv_path}{file}', header=True, inferSchema=True)
 
+        # split the file name to get the first part. Will be used during transformation
         split_file_name = file.split('.')
 
         # store df and corresponding name in dict
