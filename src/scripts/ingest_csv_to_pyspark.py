@@ -1,7 +1,7 @@
 import os
 
 
-def ingest_into_spark_df(spark_session):
+def ingest_into_spark_df(spark_session, output_path):
     # define list to CSV files to load
     csv_file_paths = []
 
@@ -9,7 +9,7 @@ def ingest_into_spark_df(spark_session):
     stored_dfs = {}
 
     # getting the csv from the output directory
-    for file in os.listdir('../resources'):   # check that this location exists. I know it does, but check regardless
+    for file in os.listdir(output_path):   # check that this location exists. I know it does, but check regardless
         csv_file_paths.append(file)
 
     # loop through the list of CSV files and load them into PySpark one at a time
