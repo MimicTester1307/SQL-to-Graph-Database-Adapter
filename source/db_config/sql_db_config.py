@@ -1,29 +1,25 @@
-import mysql.connector
-from mysql.connector import errorcode
+import pymysql
 
 
-def connect_to_db(server: str, port: int, user: str, db_name: str, psswd: str):
+def connect_to_db(server: str, port: int, user: str, db_name: str, psswd: str, ssl_ca_path: str):
     config = {
         'host': server,
         'user': user,
         'password': psswd,
         'database': db_name,
-        'port': port
+        'port': port,
+        'ssl_ca': ssl_ca_path
     }
-    # construct connection string
     try:
-        conn = mysql.connector.connect(**config)
-        print("Connection established")  # change to logging
-    except mysql.connector.Error as err:
-        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-            print("Something is wrong with the user name or password")
-        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+        # create connection object
+        conn = pymysql.connect(**config)
+        print("Connection established")
+    except pymysql.Error as err:
+        if err == pymysql.err.OperationalError:
+            print("Something is wrong with the username or password")
+        elif err == pymysql.err.ProgrammingError:
             print("Database does not exist")
         else:
-            print("Database connection failed due to {}".format(err))  # change to logging
+            print("Database connection failed due to {}".format(err))
     else:
-        cursor = conn.cursor()
-
-        return cursor
-
-    return None
+        return conn
