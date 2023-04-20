@@ -14,8 +14,7 @@ def _extract_data_from_table(conn, table_name='', batch_size=100000):
         yield pd.read_sql_query(query, conn, coerce_float=True)  # coerce_float parameter to True
 
 
-def write_table_data_to_csv(output_location='source/out/', table_list=None, batch_size=1000000, conn=None):
-    print(conn)
+def write_table_data_to_csv(output_location='src/out/', table_list=None, batch_size=1000000, conn=None):
     if table_list is None:
         table_list = []
     for table_name in table_list:
