@@ -2,6 +2,16 @@ import pymysql
 
 
 def connect_to_db(server: str, port: int, user: str, db_name: str, psswd: str, ssl_ca_path: str):
+    """uses pymysql to establish connection to an Azure MySQL server
+
+    :param server: server host/endpoint
+    :param port: port to connect in
+    :param user: database user to connect with
+    :param db_name: database name to connect to
+    :param psswd: user password
+    :param ssl_ca_path: path to SSL certificate
+    :return: pymysql connection object
+    """
     config = {
         'host': server,
         'user': user,

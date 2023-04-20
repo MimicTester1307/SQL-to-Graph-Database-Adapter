@@ -2,7 +2,7 @@ from airflow.models import DAG
 from airflow.contrib.sensors.file_sensor import FileSensor
 from airflow.operators.python import PythonOperator
 from datetime import date, datetime
-from source.scripts import extract_table_to_csv, ingest_csv_to_pyspark
+from src.scripts import extract_table_to_csv, ingest_csv_to_pyspark
 
 dag = DAG(dag_id='etl_flow', default_args={'start_date': datetime(2023, 4, 10)})
 

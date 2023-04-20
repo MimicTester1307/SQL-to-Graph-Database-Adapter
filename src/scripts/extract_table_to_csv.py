@@ -1,7 +1,15 @@
 import pandas as pd
+import typing
 
 
-def _extract_data_from_table(conn, table_name='', batch_size=100000):
+def _extract_data_from_table(conn, table_name='', batch_size=10000) -> typing.Any:
+    """Extracts data from the table in batches using specified cql connection
+
+    :param conn: Mysql connection to use; supports sqlalchemy object and pymysql object
+    :param table_name: table to extract data from
+    :param batch_size: batch size to use. default is 10000
+    :return: generator representing table data in specified batches
+    """
     with conn.cursor() as cursor:
         # get the total number of rows in the table
         cursor.execute(f'''SELECT COUNT(*) FROM {table_name};''')
@@ -15,6 +23,14 @@ def _extract_data_from_table(conn, table_name='', batch_size=100000):
 
 
 def write_table_data_to_csv(output_location='src/out/', table_list=None, batch_size=1000000, conn=None):
+    """Writes extracted table data to CSV in specified output location
+
+    :param output_location: folder where CSVs will be stored
+    :param table_list: list containing database tables to extract data from
+    :param batch_size: batch size in which to extract table data
+    :param conn: Mysql connection to use; supports sqlalchemy object and pymysql object
+    :return: None
+    """
     if table_list is None:
         table_list = []
     for table_name in table_list:

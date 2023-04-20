@@ -2,6 +2,12 @@ import os
 
 
 def ingest_into_spark_df(spark_session, csv_path):
+    """Ingests CSV files from csv_path into Spark data frame
+
+    :param spark_session: spark session to use
+    :param csv_path: path to CSV files
+    :return: dictionary of data frames with corresponding CSV file name as key and data frame as value
+    """
     print("Ingesting CSVs into PySpark DataFrames...")
 
     # define dict to store df name and corresponding df
