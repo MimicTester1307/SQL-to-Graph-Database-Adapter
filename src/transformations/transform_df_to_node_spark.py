@@ -1,6 +1,16 @@
 # from neo4j import Neo4jDataFrameWriter
 from pyspark.sql import DataFrame
 from typing import Dict
+import logging
+
+# configure logging
+logging.basicConfig(
+    filename='logs/pyspark_df_to_node.log',
+    filemode='a',
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%d-%b-%y %H:%M:%S',
+    level=logging.NOTSET
+)
 
 
 def transform_df_to_node(df_dict: Dict[str, DataFrame], config_dict: dict):
@@ -32,5 +42,9 @@ def transform_df_to_node(df_dict: Dict[str, DataFrame], config_dict: dict):
              .option("labels", f"{node_param}:{df_name.capitalize()}")
              .save()
              )
-        except Exception as e:
-            print(f"error when writing dataframe to graph due to {e}")  # TODO: change to logging
+        except Exception as err:
+            print(f"error when writing dataframe to graph due to {err}")  # TODO: add to logging
+            logging.error(f"Unable to write dataframe to node due to error {err}")
+            raise
+
+    logging.info("Writing dataframes to nodes occurred successfully.")

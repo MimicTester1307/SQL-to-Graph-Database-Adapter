@@ -1,4 +1,15 @@
 import pymysql
+import logging
+
+# configure logging
+logging.basicConfig(
+    filename='logs/sql_db_config.log',
+    filemode='a',
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%d-%b-%y %H:%M:%S',
+    level=logging.NOTSET
+)
+
 
 
 def connect_to_db(server: str, port: int, user: str, db_name: str, psswd: str, ssl_ca_path: str):
@@ -24,12 +35,15 @@ def connect_to_db(server: str, port: int, user: str, db_name: str, psswd: str, s
         # create connection object
         conn = pymysql.connect(**config)
         print("Connection established")
+        logging.info("Connection to database successfully established.")
+    except pymysql.err.OperationalError as err:
+        print("Something is wrong with the database username or password or database does not exist. See log file for "
+              "more details.")
+        logging.error(f"Database connection failed with error {err}.")
+        raise
     except pymysql.Error as err:
-        if err == pymysql.err.OperationalError:
-            print("Something is wrong with the username or password")
-        elif err == pymysql.err.ProgrammingError:
-            print("Database does not exist")
-        else:
-            print("Database connection failed due to {}".format(err))
+        print("Database connection failed. See log file for more details.")
+        logging.error(f"Database connection failed due to {err}")
+        raise
     else:
         return conn

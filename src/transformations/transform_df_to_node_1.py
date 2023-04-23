@@ -58,6 +58,7 @@ def transform_df_to_node(neo4j_instance_object, df_dict: Dict[str, DataFrame]):
                 raise
 
     session.close()
+    logging.info("Writing dataframes to nodes occurred successfully.")
 
 
 # Attempt to create relationships between nodes

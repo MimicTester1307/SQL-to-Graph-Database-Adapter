@@ -1,4 +1,15 @@
 import os
+import logging
+
+
+# configure logging
+logging.basicConfig(
+    filename='logs/csv_to_pysparkdf.log',
+    filemode='a',
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%d-%b-%y %H:%M:%S',
+    level=logging.NOTSET
+)
 
 
 def ingest_into_spark_df(spark_session, csv_path):
@@ -26,6 +37,9 @@ def ingest_into_spark_df(spark_session, csv_path):
             stored_dfs[split_file_name[0]] = df
     else:
         print("The specified location does not exist")
+        logging.warning("The specified filename does not exist.")
+
+    logging.info("Ingesting CSV into Spark data frames completed successfully.")
 
     return stored_dfs
 

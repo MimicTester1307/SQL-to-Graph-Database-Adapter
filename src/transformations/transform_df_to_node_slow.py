@@ -1,10 +1,17 @@
+import neo4j
 from pyspark.sql import DataFrame
+
 from typing import Dict
-
-from neo4j.exceptions import ServiceUnavailable
-
 import logging
-import json
+
+# configure logging
+logging.basicConfig(
+    filename='logs/pyspark_df_to_node.log',
+    filemode='a',
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%d-%b-%y %H:%M:%S',
+    level=logging.NOTSET
+)
 
 
 def transform_df_to_node(neo4j_instance_object, df_dict: Dict[str, DataFrame]):
@@ -28,12 +35,19 @@ def transform_df_to_node(neo4j_instance_object, df_dict: Dict[str, DataFrame]):
                 node[key] = value
 
             # Merge node into Neo4j db to prevent duplicates
-            with neo4j_instance_object.driver.session() as session:
-                session.write_transaction(create_node, node, columns)
+            try:
+                with neo4j_instance_object.driver.session() as session:
+                    session.write_transaction(_create_node, node, columns)
+            except neo4j.exceptions.SessionError as err:
+                print("An error occurred while using a session.")
+                logging.error(f"Error {err} occurred while using session.")
+                raise
+
+    logging.info("Writing dataframes to nodes occurred successfully.")
 
 
 # Function to create node in Neo4j database
-def create_node(tx, node, columns):
+def _create_node(tx, node, columns):
     query = "MERGE (n: {label} {{{props}}}) RETURN n"
     props = ", ".join(["{}: ${}".format(column, column) for column in columns])
     result = tx.run(query.format(label=node["label"], props=props), **node)
