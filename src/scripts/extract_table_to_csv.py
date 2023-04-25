@@ -46,7 +46,6 @@ def _extract_data_from_table(conn, table_name='', batch_size=10000) -> typing.An
     logging.info("Querying table data executed successfully.")
 
 
-
 def write_table_data_to_csv(output_location='src/out/', table_list=None, batch_size=1000000, conn=None):
     """Writes extracted table data to CSV in specified output location
 

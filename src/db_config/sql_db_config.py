@@ -11,7 +11,6 @@ logging.basicConfig(
 )
 
 
-
 def connect_to_db(server: str, port: int, user: str, db_name: str, psswd: str, ssl_ca_path: str):
     """uses pymysql to establish connection to an Azure MySQL server
 
