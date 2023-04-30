@@ -20,6 +20,6 @@ After the virtual environment is created, you can clone this repository to your 
 
 To run the system, simply:
 - run the `main.py` file using your favourite IDE, or from the terminal type `python3 main.py`.
-- observe (possibly side-by-side), as the system runs and your node labels are generated.
+- observe (possibly side-by-side), as the system runs and your node labels are generated in the `Query` tab of your opened AuraDB instance.
 
 In the future, we could create a provision for automatically providing the relationship you want to examine between your nodes. Automatically doing so now was more complex than we earlier thought.
