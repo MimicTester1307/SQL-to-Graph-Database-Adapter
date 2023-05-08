@@ -4,7 +4,7 @@ from airflow.operators.python import PythonOperator
 from datetime import date, datetime
 from src.scripts import extract_table_to_csv, ingest_csv_to_pyspark
 
-dag = DAG(dag_id='etl_flow', default_args={'start_date': datetime(2023, 4, 10)})
+dag = DAG(dag_id='etl_flow', schedule_interval="@weekly", default_args={'start_date': datetime(2023, 4, 10)})
 
 sensor = FileSensor(task_id='sense_csv_files',
                     filepath="../out/*.csv",
