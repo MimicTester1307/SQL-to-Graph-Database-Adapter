@@ -96,7 +96,7 @@ psutil==5.9.4
 py4j==0.10.9.7
 pyarrow==11.0.0
 pycparser==2.21
-Pygments==2.14.0
+Pygments==2.15.0
 PyJWT==2.6.0
 PyMySQL==1.0.3
 pyparsing==3.0.9
